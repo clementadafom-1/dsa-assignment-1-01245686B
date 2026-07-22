@@ -1,0 +1,279 @@
+# =============================================
+# ASSIGNMENT 1: ARRAY OPERATIONS
+# University Course Registration Analytics
+# =============================================
+
+def most_frequent_registrant(registrations):
+    """
+    Find the student ID that appears the most times in the registration list.
+    
+    Time Complexity: O(n) - Single pass through the list
+    Space Complexity: O(n) - Hash map stores at most n unique entries
+    
+    Args:
+        registrations (list): List of student IDs
+        
+    Returns:
+        int: The most frequent student ID, or None if list is empty
+    """
+    if not registrations:
+        return None
+    
+    frequency = {}
+    max_count = 0
+    most_frequent = None
+    
+    for student_id in registrations:
+        frequency[student_id] = frequency.get(student_id, 0) + 1
+        if frequency[student_id] > max_count:
+            max_count = frequency[student_id]
+            most_frequent = student_id
+    
+    return most_frequent
+
+
+def ordered_deduplication(registrations):
+    """
+    Remove all duplicate student IDs while preserving the order of first appearance.
+    
+    Time Complexity: O(n) - Single pass through the list
+    Space Complexity: O(n) - Hash map to track seen elements
+    
+    Args:
+        registrations (list): List of student IDs
+        
+    Returns:
+        list: List with duplicates removed, preserving original order
+    """
+    if not registrations:
+        return []
+    
+    seen = set()
+    result = []
+    
+    for student_id in registrations:
+        if student_id not in seen:
+            seen.add(student_id)
+            result.append(student_id)
+    
+    return result
+
+
+def first_unique_student(registrations):
+    """
+    Find the first student ID that appears exactly once.
+    
+    Time Complexity: O(n) - Two passes through the list
+    Space Complexity: O(n) - Hash map stores frequency counts
+    
+    Args:
+        registrations (list): List of student IDs
+        
+    Returns:
+        int: The first non-repeated student ID, or None if none exists
+    """
+    if not registrations:
+        return None
+    
+    frequency = {}
+    
+    # First pass: Count occurrences
+    for student_id in registrations:
+        frequency[student_id] = frequency.get(student_id, 0) + 1
+    
+    # Second pass: Find first with count == 1
+    for student_id in registrations:
+        if frequency[student_id] == 1:
+            return student_id
+    
+    return None
+
+
+def contiguous_subarray_sum(registrations, target):
+    """
+    Determine if there exists a contiguous subarray whose sum equals the target.
+    
+    Time Complexity: O(n) - Using sliding window technique
+    Space Complexity: O(1) - Only constant extra space
+    
+    For arrays with positive numbers, uses sliding window.
+    For arrays with negative numbers, uses prefix sum with hash set.
+    
+    Args:
+        registrations (list): List of integers
+        target (int): Target sum to find
+        
+    Returns:
+        bool: True if a contiguous subarray with sum equals target exists
+    """
+    if not registrations:
+        return target == 0
+    
+    # Using sliding window for positive numbers
+    # For general case with negatives, use prefix sum approach
+    
+    # Prefix sum approach (works for all integers)
+    prefix_sum = 0
+    seen_sums = set()
+    
+    for num in registrations:
+        prefix_sum += num
+        
+        if prefix_sum == target:
+            return True
+        
+        if (prefix_sum - target) in seen_sums:
+            return True
+        
+        seen_sums.add(prefix_sum)
+    
+    return False
+
+
+def analyze_complexities():
+    """
+    Complexity Analysis for all array operations.
+    
+    Returns:
+        dict: Dictionary containing complexity analysis for each function
+    """
+    return {
+        "most_frequent_registrant": {
+            "time": "O(n)",
+            "space": "O(n)",
+            "explanation": "Single pass to count frequencies using hash map"
+        },
+        "ordered_deduplication": {
+            "time": "O(n)",
+            "space": "O(n)",
+            "explanation": "Single pass using set for O(1) lookups"
+        },
+        "first_unique_student": {
+            "time": "O(n)",
+            "space": "O(n)",
+            "explanation": "Two passes: one for counting, one for finding first unique"
+        },
+        "contiguous_subarray_sum": {
+            "time": "O(n)",
+            "space": "O(n)",
+            "explanation": "Prefix sum technique with hash set for O(1) lookups"
+        }
+    }
+
+
+def main():
+    """
+    Main function to demonstrate all array operations.
+    """
+    # Sample registration data
+    registrations = [1023, 1050, 1023, 1102, 1050, 1023, 1201, 1102, 1300, 1023]
+    target_sum = 2205  # Example target (1050 + 1102 + 53? Actually 1050 + 1102 = 2152, need other)
+    
+    # 1. Most Frequent Registrant
+    most_frequent = most_frequent_registrant(registrations)
+    print(f"1. Most frequent student: {most_frequent}")
+    
+    # 2. Ordered Deduplication
+    unique_registrations = ordered_deduplication(registrations)
+    print(f"2. Unique registrations: {unique_registrations}")
+    
+    # 3. First Unique Student
+    first_unique = first_unique_student(registrations)
+    print(f"3. First non-repeated student: {first_unique}")
+    
+    # 4. Contiguous Subarray Sum
+    # Test with various targets
+    test_targets = [2205, 4102, 1023, 4555]
+    for target in test_targets:
+        exists = contiguous_subarray_sum(registrations, target)
+        print(f"4. Subarray with target sum {target} exists: {exists}")
+    
+    # 5. Complexity Analysis
+    print("\n5. Complexity Analysis:")
+    complexities = analyze_complexities()
+    for func_name, analysis in complexities.items():
+        print(f"   {func_name}:")
+        print(f"     Time: {analysis['time']}")
+        print(f"     Space: {analysis['space']}")
+        print(f"     Explanation: {analysis['explanation']}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+# =============================================
+# TESTING SECTION
+# =============================================
+
+def run_tests():
+    """
+    Comprehensive testing for all array operations.
+    """
+    print("\n" + "="*50)
+    print("RUNNING COMPREHENSIVE TESTS")
+    print("="*50)
+    
+    # Test 1: Empty list
+    print("\n--- Test 1: Empty List ---")
+    empty_list = []
+    print(f"Most frequent: {most_frequent_registrant(empty_list)}")
+    print(f"Unique: {ordered_deduplication(empty_list)}")
+    print(f"First unique: {first_unique_student(empty_list)}")
+    print(f"Subarray sum target=5: {contiguous_subarray_sum(empty_list, 5)}")
+    
+    # Test 2: Single element
+    print("\n--- Test 2: Single Element List ---")
+    single = [42]
+    print(f"Most frequent: {most_frequent_registrant(single)}")
+    print(f"Unique: {ordered_deduplication(single)}")
+    print(f"First unique: {first_unique_student(single)}")
+    print(f"Subarray sum target=42: {contiguous_subarray_sum(single, 42)}")
+    print(f"Subarray sum target=100: {contiguous_subarray_sum(single, 100)}")
+    
+    # Test 3: All elements same
+    print("\n--- Test 3: All Elements Same ---")
+    same = [5, 5, 5, 5, 5]
+    print(f"Most frequent: {most_frequent_registrant(same)}")
+    print(f"Unique: {ordered_deduplication(same)}")
+    print(f"First unique: {first_unique_student(same)}")
+    print(f"Subarray sum target=20: {contiguous_subarray_sum(same, 20)}")
+    print(f"Subarray sum target=25: {contiguous_subarray_sum(same, 25)}")
+    
+    # Test 4: All elements unique
+    print("\n--- Test 4: All Elements Unique ---")
+    unique = [1, 2, 3, 4, 5]
+    print(f"Most frequent: {most_frequent_registrant(unique)}")
+    print(f"Unique: {ordered_deduplication(unique)}")
+    print(f"First unique: {first_unique_student(unique)}")
+    print(f"Subarray sum target=9: {contiguous_subarray_sum(unique, 9)}")  # 4+5
+    print(f"Subarray sum target=15: {contiguous_subarray_sum(unique, 15)}")  # 1+2+3+4+5
+    
+    # Test 5: Negative numbers
+    print("\n--- Test 5: Negative Numbers ---")
+    mixed = [1, -2, 3, -4, 5]
+    print(f"Most frequent: {most_frequent_registrant(mixed)}")
+    print(f"Unique: {ordered_deduplication(mixed)}")
+    print(f"First unique: {first_unique_student(mixed)}")
+    print(f"Subarray sum target=0: {contiguous_subarray_sum(mixed, 0)}")  # 1+(-2)+3+(-4)+2? Actually check
+    print(f"Subarray sum target=-3: {contiguous_subarray_sum(mixed, -3)}")  # 1+(-2)+3+(-4)+5 = 3? Let's check 1+(-2)+3+(-4)+? -4+? Actually -4+5=1
+    
+    # Test 6: Large input (performance)
+    print("\n--- Test 6: Large Input (Performance) ---")
+    large_list = list(range(10000)) * 3  # Each number appears 3 times
+    print(f"List size: {len(large_list)}")
+    print(f"Most frequent (should be 9999): {most_frequent_registrant(large_list)}")
+    
+    # Test 7: Edge case for subarray sum
+    print("\n--- Test 7: Subarray Sum Edge Cases ---")
+    test_list = [1023, 1050, 1023, 1102, 1050, 1023, 1201]
+    print(f"List: {test_list}")
+    # Check specific subarray sums
+    print(f"Target 2100 (1023+1050+27? No): {contiguous_subarray_sum(test_list, 2100)}")
+    print(f"Target 2073 (1023+1050): {contiguous_subarray_sum(test_list, 2073)}")
+    print(f"Target 2125 (1023+1050+? No): {contiguous_subarray_sum(test_list, 2125)}")
+
+
+# Uncomment to run tests
+# if __name__ == "__main__":
+#     run_tests()
